@@ -1,0 +1,33 @@
+name: Confirm Flaky Test with NonDex
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  run-nondex:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the Flaky Project Code
+      uses: actions/checkout@v3
+      with:
+        repository: apache/pulsar
+        ref: fdeb191a946a76ca5edde81464f453fcd03fc6d3
+
+    - name: Set up Java 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Compile the code
+      run: mvn clean install -DskipTests -pl pulsar-broker -am
+
+    - name: Run test normally (Should Pass)
+      run: mvn -pl pulsar-broker test -Dtest=org.apache.pulsar.client.api.TenantTest#testMaxTenant
+
+    - name: Run NonDex (Should Fail)
+      run: mvn -pl pulsar-broker edu.illinois:nondex-maven-plugin:2.1.1:nondex -Dtest=org.apache.pulsar.client.api.TenantTest#testMaxTenant
