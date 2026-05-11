@@ -13,8 +13,8 @@ jobs:
     - name: Checkout the Flaky Project Code
       uses: actions/checkout@v3
       with:
-        repository: kiegroup/jbpm
-        ref: f7e80e82b7670c09485ce83869a287ef51dcb59c
+        repository: mapstruct/mapstruct
+        ref: 26c5bcd923c7206ad161e93237f841a79ca85efd
 
     - name: Set up Java 11
       uses: actions/setup-java@v3
@@ -24,10 +24,10 @@ jobs:
         cache: maven
 
     - name: Compile the code
-      run: mvn clean install -DskipTests -pl jbpm-case-mgmt/jbpm-case-mgmt-impl -am
+      run: mvn clean install -DskipTests -pl processor -am
 
     - name: Run test normally (Should Pass)
-      run: mvn -pl jbpm-case-mgmt/jbpm-case-mgmt-impl test -Dtest=org.jbpm.casemgmt.impl.CaseServiceImplTest#testCaseWithIndexedFromVariableUpdates
+      run: mvn -pl processor test -Dtest=org.mapstruct.ap.test.conversion.java8time.Java8TimeConversionTest#testInstantToStringMapping
 
     - name: Run NonDex (Should Fail)
-      run: mvn -pl jbpm-case-mgmt/jbpm-case-mgmt-impl edu.illinois:nondex-maven-plugin:2.1.1:nondex -Dtest=org.jbpm.casemgmt.impl.CaseServiceImplTest#testCaseWithIndexedFromVariableUpdates
+      run: mvn -pl processor edu.illinois:nondex-maven-plugin:2.1.1:nondex -Dtest=org.mapstruct.ap.test.conversion.java8time.Java8TimeConversionTest#testInstantToStringMapping
